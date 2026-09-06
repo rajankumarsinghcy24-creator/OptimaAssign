@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OptimaAssign - Performance-Aware Workforce Optimization</title>
+  <!-- Google Fonts Outfit & Plus Jakarta Sans & Inter -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Fixed Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a class="sidebar-brand" href="#">
+          <div class="brand-icon">
+            <i class="fa-solid fa-shapes"></i>
+          </div>
+          <div class="brand-info">
+            <span class="brand-name">OptimaAssign</span>
+            <span class="brand-subtitle">Workforce OS</span>
+          </div>
+        </a>
+        <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" title="Collapse Sidebar">
+          <i class="fa-solid fa-angles-left" id="collapseIcon"></i>
+        </button>
+      </div>
+      
+      <div class="sidebar-nav-container">
+        <div class="sidebar-category">MAIN</div>
+        <ul class="sidebar-menu">
+          <li>
+            <a class="menu-item-link active" data-section="dashboard">
+              <i class="fa-solid fa-chart-pie"></i>
+              <span>Overview</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="sidebar-category">WORKFORCE</div>
+        <ul class="sidebar-menu">
+          <li>
+            <a class="menu-item-link" data-section="employees">
+              <i class="fa-solid fa-users"></i>
+              <span>Employees</span>
+            </a>
+          </li>
+          <li>
+            <a class="menu-item-link" data-section="tasks">
+              <i class="fa-solid fa-list-check"></i>
+              <span>Task Registry</span>
+            </a>
+          </li>
+          <li>
+            <a class="menu-item-link" data-section="assignments">
+              <i class="fa-solid fa-circle-nodes"></i>
+              <span>Assignments</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="sidebar-category">INSIGHTS</div>
+        <ul class="sidebar-menu">
+          <li>
+            <a class="menu-item-link" data-section="analytics">
+              <i class="fa-solid fa-chart-line"></i>
+              <span>Analytics</span>
+            </a>
+          </li>
+          <li>
+            <a class="menu-item-link" data-section="activity">
+              <i class="fa-solid fa-timeline"></i>
+              <span>Activity</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="sidebar-category">OPERATIONS</div>
+        <ul class="sidebar-menu">
+          <li>
+            <a class="menu-item-link" data-section="submission">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+              <span>Deliverables</span>
+            </a>
+          </li>
+          <li>
+            <a class="menu-item-link" id="navNotificationsTrigger" onclick="document.getElementById('notificationBtn').click()">
+              <i class="fa-solid fa-bell"></i>
+              <span>Notifications</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="sidebar-category">SYSTEM</div>
+        <ul class="sidebar-menu">
+          <li>
+            <a class="menu-item-link" data-section="settings">
+              <i class="fa-solid fa-sliders"></i>
+              <span>Settings</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      
+      <div class="sidebar-footer">
+        <div class="user-avatar-sm" id="avatarName">A</div>
+        <div class="user-info-text">
+          <span class="user-name">Admin</span>
+          <span class="user-role">Operations Manager</span>
+        </div>
+      </div>
+    </aside>
+    
+    <!-- Main Content Panel -->
+    <main class="main-wrapper">
+      
+      <!-- Top Sticky Header -->
+      <header class="top-header">
+        <div class="header-left">
+          <button class="mobile-toggle" id="sidebarToggle" aria-label="Toggle Sidebar">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="header-page-title-box">
+            <span class="header-page-title" id="headerSectionTitle">Operations Dashboard</span>
+            <span class="header-page-subtitle" id="headerSectionSub">Real-time workforce deployment and capability indicators</span>
+          </div>
+        </div>
+        
+        <div class="header-right">
+          <!-- Compact Search Bar -->
+          <div class="search-bar">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" placeholder="Search employees, tasks, skills..." id="globalSearch">
+          </div>
+          
+          <!-- Theme Switcher -->
+          <button class="action-btn" id="themeToggle" title="Toggle Theme">
+            <i class="fa-solid fa-sun" id="themeIconSun" style="display: none;"></i>
+            <i class="fa-solid fa-moon" id="themeIconMoon"></i>
+          </button>
+          
+          <!-- Notifications indicator & Dropdown Panel -->
+          <div class="notification-wrapper" style="position: relative;">
+            <button class="action-btn" id="notificationBtn" title="Notifications">
+              <i class="fa-solid fa-bell"></i>
+              <span class="btn-badge" id="notificationBadge" style="display: none;">0</span>
+            </button>
+
+            <div class="notification-dropdown" id="notificationDropdown" style="display: none; position: absolute; right: 0; top: 48px; width: 340px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--border-radius-lg); box-shadow: var(--shadow-lg); z-index: 1000; padding: 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 12px; margin-bottom: 12px;">
+                <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin: 0;">
+                  <i class="fa-solid fa-bell" style="color: var(--primary); margin-right: 6px;"></i> System Notifications
+                </h4>
+                <button id="markReadBtn" style="background: none; border: none; font-size: 0.75rem; color: var(--primary); cursor: pointer; font-weight: 600;">Mark all as read</button>
+              </div>
+              <div id="notificationList" style="max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+                <!-- Dynamically populated via JS -->
+              </div>
+            </div>
+          </div>
+          
+          <button class="action-btn" id="logoutBtn" title="System Status: Connected">
+            <i class="fa-solid fa-server" style="color: var(--success);"></i>
+          </button>
+        </div>
+      </header>
+      
+      <!-- Page Views Container -->
+      <div class="content-body">
+        
+        <!-- SECTION 1: DASHBOARD OVERVIEW -->
+        <section class="view-section active" id="section-dashboard">
+          <div class="section-header">
+            <div class="section-title">
+              <h1>Good morning, Admin</h1>
+              <p>Here's what's happening across your workforce today.</p>
+            </div>
+            <div class="section-actions">
+              <button class="btn btn-secondary" id="quickAddEmpBtn" onclick="document.getElementById('openEmployeeModal').click()">
+                <i class="fa-solid fa-user-plus"></i> + Add Employee
+              </button>
+              <button class="btn btn-secondary" id="quickAddTaskBtn" onclick="document.getElementById('openTaskModal').click()">
+                <i class="fa-solid fa-plus"></i> + Create Task
+              </button>
+              <button class="btn btn-primary" onclick="triggerOptimization()">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Run Optimization
+              </button>
+            </div>
+          </div>
+          
+          <!-- Executive Metrics Grid -->
+          <div class="metrics-grid">
+            <div class="metric-card metric-purple">
+              <div class="metric-header">
+                <span class="metric-title">Total Employees</span>
+                <div class="metric-icon-box purple">
+                  <i class="fa-solid fa-users"></i>
+                </div>
+              </div>
+              <div class="metric-value" id="card-total-employees">0</div>
+              <div class="metric-trend neutral">
+                <i class="fa-solid fa-user-check"></i>
+                <span>Registered members</span>
+              </div>
+            </div>
+
+            <div class="metric-card metric-mint">
+              <div class="metric-header">
+                <span class="metric-title">Active Employees</span>
+                <div class="metric-icon-box mint">
+                  <i class="fa-solid fa-user-clock"></i>
+                </div>
+              </div>
+              <div class="metric-value" id="card-active-employees">0</div>
+              <div class="metric-trend up">
+                <i class="fa-solid fa-briefcase"></i>
+                <span>Busy on deployments</span>
+              </div>
+            </div>
+            
+            <div class="metric-card metric-amber">
+              <div class="metric-header">
+                <span class="metric-title">Pending Tasks</span>
+                <div class="metric-icon-box amber">
+                  <i class="fa-solid fa-hourglass-start"></i>
+                </div>
+              </div>
+              <div class="metric-value" id="card-pending-tasks">0</div>
+              <div class="metric-trend neutral">
+                <i class="fa-solid fa-clock"></i>
+                <span>Awaiting allocation</span>
+              </div>
+            </div>
+
+            <div class="metric-card metric-coral">
+              <div class="metric-header">
+                <span class="metric-title">Active Tasks</span>
+                <div class="metric-icon-box coral">
+                  <i class="fa-solid fa-bars-progress"></i>
+                </div>
+              </div>
+              <div class="metric-value" id="card-active-tasks">0</div>
+              <div class="metric-trend up">
+                <i class="fa-solid fa-spinner"></i>
+                <span>Currently in flight</span>
+              </div>
+            </div>
+            
+            <div class="metric-card metric-mint">
+              <div class="metric-header">
+                <span class="metric-title">Completed Work</span>
+                <div class="metric-icon-box mint">
+                  <i class="fa-solid fa-circle-check"></i>
+                </div>
+              </div>
+              <div class="metric-value" id="card-completed-tasks">0</div>
+              <div class="metric-trend up">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Delivered outcomes</span>
+              </div>
+            </div>
+            
+            <div class="metric-card metric-violet">
+              <div class="metric-header">
+                <span class="metric-title">Average Performance</span>
+                <div class="metric-icon-box violet">
+                  <i class="fa-solid fa-award"></i>
+                </div>
+              </div>
+              <div class="metric-value" id="card-avg-performance">0.0</div>
+              <div class="metric-trend neutral">
+                <i class="fa-solid fa-minus"></i>
+                <span>Current workforce average</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- WORKFORCE INTELLIGENCE SECTION -->
+          <div class="dashboard-section-header">
+            <h2><i class="fa-solid fa-brain" style="color: var(--primary);"></i> Workforce Intelligence</h2>
+          </div>
+
+          <div class="charts-grid">
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <span class="chart-card-title"><i class="fa-solid fa-chart-line"></i> Employee Performance History</span>
+              </div>
+              <div class="chart-container">
+                <canvas id="chartPerformanceDashboard"></canvas>
+                <div class="chart-empty-state" id="empty-chartPerformanceDashboard" style="display: none;">
+                  <i class="fa-solid fa-chart-line"></i>
+                  <p class="empty-title">No performance history available yet</p>
+                  <p class="empty-sub">Complete a task to start tracking employee performance.</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <span class="chart-card-title"><i class="fa-solid fa-chart-pie"></i> Task Status Alignment</span>
+              </div>
+              <div class="chart-container">
+                <canvas id="chartTaskCompletionDashboard"></canvas>
+                <div class="chart-empty-state" id="empty-chartTaskCompletionDashboard" style="display: none;">
+                  <i class="fa-solid fa-chart-pie"></i>
+                  <p class="empty-title">No task distribution data yet</p>
+                  <p class="empty-sub">Create tasks to track task status alignment.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ASSIGNMENT OPTIMIZATION SECTION -->
+          <div class="dashboard-section-header">
+            <h2><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--primary);"></i> Assignment Optimization</h2>
+          </div>
+
+          <!-- Optimization Banner -->
+          <div class="optim-banner">
+            <div class="optim-banner-content">
+              <h2>Greedy Workforce Optimization Engine</h2>
+              <p>OptimaAssign continuously evaluates role matching, primary and secondary skill alignments, performance capability, and experience levels to balance workload across available team members.</p>
+            </div>
+            <div>
+              <button class="btn btn-primary" onclick="triggerOptimization()">
+                <i class="fa-solid fa-play"></i> Run Optimization
+              </button>
+            </div>
+          </div>
+
+          <!-- Dashboard Layout Row: Today's Tasks and Top Performers -->
+          <div class="charts-grid">
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <span class="chart-card-title"><i class="fa-solid fa-clock-rotate-left"></i> Today's Tasks & Deadlines</span>
+              </div>
+              <div class="leaderboard-list" id="dashboardTodayTasks">
+                <!-- Javascript populated -->
+              </div>
+            </div>
+            
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <span class="chart-card-title"><i class="fa-solid fa-medal"></i> Top Performing Workforce</span>
+              </div>
+              <div class="leaderboard-list" id="dashboardTopWorkforce">
+                <!-- Javascript populated -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Dashboard Layout Row: Recent Activity, Assignments, and Submissions -->
+          <div class="dashboard-widgets-grid">
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <span class="chart-card-title"><i class="fa-solid fa-circle-nodes"></i> Recent Assignments</span>
+              </div>
+              <div class="leaderboard-list" id="dashboardRecentAssignments">
+                <!-- Javascript populated -->
+              </div>
+            </div>
+
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <span class="chart-card-title"><i class="fa-solid fa-cloud-arrow-up"></i> Recent Submissions</span>
+              </div>
+              <div class="leaderboard-list" id="dashboardRecentSubmissions">
+                <!-- Javascript populated -->
+              </div>
+            </div>
+
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <span class="chart-card-title"><i class="fa-solid fa-timeline"></i> Activity Feed</span>
+              </div>
+              <div class="activity-timeline" id="dashboardActivityFeed" style="max-height: 220px; overflow-y: auto; padding-right: 4px;">
+                <!-- Javascript populated -->
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- SECTION 2: EMPLOYEES MANAGEMENT -->
+        <section class="view-section" id="section-employees">
+          <div class="section-header">
+            <div class="section-title">
+              <h1>Employees Management</h1>
+              <p>Configure team members, skills list, and availability status</p>
+            </div>
+            <div class="section-actions">
+              <button class="btn btn-primary" id="openEmployeeModal">
+                <i class="fa-solid fa-user-plus"></i> + Add Employee
+              </button>
+            </div>
+          </div>
+          
+          <!-- Employee Filter & Sort Bar -->
+          <div class="filter-bar" style="margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; background: var(--card-bg); padding: 16px; border-radius: var(--border-radius-lg); border: 1px solid var(--card-border);">
+            <div class="search-bar" style="width: 220px; min-width: 180px;">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" placeholder="Search employees..." id="empSearchInput">
+            </div>
+            
+            <select id="empAvailabilityFilter" class="form-control" style="width: 140px;">
+              <option value="ALL">All Availability</option>
+              <option value="Available">Available</option>
+              <option value="Busy">Busy</option>
+            </select>
+            
+            <select id="empRoleFilter" class="form-control" style="width: 150px;">
+              <option value="ALL">All Roles</option>
+              <option value="Backend">Backend</option>
+              <option value="Frontend">Frontend</option>
+              <option value="DevOps">DevOps</option>
+              <option value="QA">QA</option>
+              <option value="Database">Database</option>
+              <option value="Data Science">Data Science / ML</option>
+            </select>
+
+            <select id="empSkillFilter" class="form-control" style="width: 130px;">
+              <option value="ALL">All Skills</option>
+              <option value="Python">Python</option>
+              <option value="SQL">SQL</option>
+              <option value="JavaScript">JavaScript</option>
+              <option value="CSS">CSS</option>
+              <option value="React">React</option>
+              <option value="Docker">Docker</option>
+              <option value="Kubernetes">Kubernetes</option>
+              <option value="Selenium">Selenium</option>
+              <option value="Postgres">Postgres</option>
+            </select>
+
+            <select id="empPerformanceFilter" class="form-control" style="width: 150px;">
+              <option value="ALL">All Performance</option>
+              <option value="HIGH">High (9.0 - 10.0)</option>
+              <option value="MED">Good (8.0 - 8.9)</option>
+              <option value="LOW">Moderate (&lt; 8.0)</option>
+            </select>
+
+            <select id="empExperienceFilter" class="form-control" style="width: 150px;">
+              <option value="ALL">All Experience</option>
+              <option value="SENIOR">Senior (7+ Yrs)</option>
+              <option value="MID">Mid-Level (4-6 Yrs)</option>
+              <option value="JUNIOR">Junior (1-3 Yrs)</option>
+            </select>
+
+            <div class="form-group" style="flex-direction: row; align-items: center; gap: 8px; margin-bottom: 0; margin-left: auto;">
+              <label for="employeeSort" style="white-space: nowrap; font-size: 0.8rem; color: var(--text-muted);">Sort By</label>
+              <select id="employeeSort" class="form-control" style="width: 160px;">
+                <option value="score_desc">Performance (High → Low)</option>
+                <option value="score_asc">Performance (Low → High)</option>
+                <option value="experience_desc">Experience (High → Low)</option>
+                <option value="experience_asc">Experience (Low → High)</option>
+                <option value="success_rate_desc">Success Rate (High → Low)</option>
+                <option value="completed_tasks_desc">Completed Tasks</option>
+                <option value="active_tasks_desc">Active Tasks</option>
+              </select>
+            </div>
+          </div>
+          
+          <!-- Employee Cards Grid -->
+          <div class="card-grid" id="employeeCardsGrid">
+            <!-- Populated via JS -->
+          </div>
+        </section>
+        
+        <!-- SECTION 3: TASKS REGISTRY -->
+        <section class="view-section" id="section-tasks">
+          <div class="section-header">
+            <div class="section-title">
+              <h1>Task Registry</h1>
+              <p>Manage incoming work queues, deadlines, and skill requirements</p>
+            </div>
+            <div class="section-actions">
+              <button class="btn btn-primary" id="openTaskModal">
+                <i class="fa-solid fa-plus"></i> + Create Task
+              </button>
+            </div>
+          </div>
+
+          <!-- Project Management Filter Bar -->
+          <div class="filter-bar" style="margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; background: var(--card-bg); padding: 16px; border-radius: var(--border-radius-lg); border: 1px solid var(--card-border);">
+            <div class="search-bar" style="width: 220px; min-width: 180px;">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" placeholder="Filter tasks..." id="taskSearchInput">
+            </div>
+            <select id="taskStatusFilter" class="form-control" style="width: 140px;">
+              <option value="ALL">All Statuses</option>
+              <option value="Pending">Pending</option>
+              <option value="In-Progress">In-Progress</option>
+              <option value="Completed">Completed</option>
+            </select>
+            <select id="taskPriorityFilter" class="form-control" style="width: 140px;">
+              <option value="ALL">All Priorities</option>
+              <option value="High">High Priority</option>
+              <option value="Medium">Medium Priority</option>
+              <option value="Low">Low Priority</option>
+            </select>
+            <select id="taskSkillFilter" class="form-control" style="width: 140px;">
+              <option value="ALL">All Required Skills</option>
+              <option value="Python">Python</option>
+              <option value="SQL">SQL</option>
+              <option value="JavaScript">JavaScript</option>
+              <option value="CSS">CSS</option>
+              <option value="React">React</option>
+              <option value="Kubernetes">Kubernetes</option>
+              <option value="Selenium">Selenium</option>
+              <option value="API">API</option>
+            </select>
+            <select id="taskDeadlineFilter" class="form-control" style="width: 150px;">
+              <option value="ALL">All Deadlines</option>
+              <option value="UPCOMING">Upcoming</option>
+              <option value="OVERDUE">Overdue</option>
+            </select>
+            <div class="form-group" style="flex-direction: row; align-items: center; gap: 8px; margin-bottom: 0; margin-left: auto;">
+              <label for="taskSort" style="white-space: nowrap; font-size: 0.8rem; color: var(--text-muted);">Sort By</label>
+              <select id="taskSort" class="form-control" style="width: 160px;">
+                <option value="priority">Priority Order</option>
+                <option value="deadline_asc">Deadline (Earliest First)</option>
+                <option value="deadline_desc">Deadline (Latest First)</option>
+                <option value="status">Status</option>
+                <option value="title">Task Title (A-Z)</option>
+              </select>
+            </div>
+          </div>
+          
+          <!-- Task Cards Grid -->
+          <div class="card-grid" id="taskCardsGrid">
+            <!-- Populated via JS -->
+          </div>
+        </section>
+        
+        <!-- SECTION 4: ASSIGNMENTS -->
+        <section class="view-section" id="section-assignments">
+          <div class="section-header">
+            <div class="section-title">
+              <h1>Optimized Assignments</h1>
+              <p>Dynamic job allocations based on performance matching and task requirements</p>
+            </div>
+            <div class="section-actions">
+              <button class="btn btn-primary" onclick="triggerOptimization()">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Compute Allocations
+              </button>
+            </div>
+          </div>
+          
+          <!-- Optimization Banner -->
+          <div class="optim-banner">
+            <div class="optim-banner-content">
+              <h2>Greedy Allocation Engine</h2>
+              <p>Our algorithm balances the workload by matching skills, role types, performance capability, and years of experience. Clicking Run Optimization evaluates all pending and active tasks for candidate availability.</p>
+            </div>
+            <div>
+              <button class="btn btn-secondary" onclick="triggerOptimization()">
+                <i class="fa-solid fa-play"></i> Run Optimization
+              </button>
+            </div>
+          </div>
+          
+          <!-- Assignments Data Table -->
+          <div class="table-card">
+            <div class="table-responsive">
+              <table class="custom-table" id="assignmentsTable">
+                <thead>
+                  <tr>
+                    <th>Employee</th>
+                    <th>Assigned Task</th>
+                    <th>Required Skill</th>
+                    <th>Priority</th>
+                    <th>Deadline</th>
+                    <th>Deployment Status</th>
+                  </tr>
+                </thead>
+                <tbody id="assignmentsTableBody">
+                  <!-- Populated via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+        
+        <!-- SECTION 5: ANALYTICS HUB -->
+        <section class="view-section" id="section-analytics">
+          <div class="section-header">
+            <div class="section-title">
+              <h1>Analytics Hub</h1>
+              <p>Advanced metrics, workforce workloads, and performance trend insights</p>
+            </div>
+          </div>
+          
+          <!-- Analytics metric boxes -->
+          <div class="analytics-grid-three" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px;">
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <span class="chart-card-title"><i class="fa-solid fa-crown"></i> Top Performer Summary</span>
+              </div>
+              <div class="profile-mini" style="margin: 10px 0; display: flex; align-items: center; gap: 12px;">
+                <img id="best-emp-avatar" class="profile-mini-avatar-img" src="" alt="Best Employee" style="width: 44px; height: 44px; border-radius: 50%;">
+                <div>
+                  <h3 id="best-emp-name" style="font-size: 1rem; font-weight: 700;">Loading...</h3>
+                  <p id="best-emp-skills" style="font-size: 0.75rem; color: var(--text-muted);">Skills: Loading...</p>
+                </div>
+              </div>
+              <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.78rem; color: var(--text-muted);">Capability Rating</span>
+                <span id="best-emp-score" style="font-size: 1.6rem; font-weight: 800; color: var(--success);">0.0</span>
+              </div>
+            </div>
+            
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <span class="chart-card-title"><i class="fa-solid fa-fire"></i> Workload Distribution</span>
+              </div>
+              <div style="font-size: 0.8rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: flex; justify-content: space-between;">
+                  <span>Most Busy Employee</span>
+                  <span id="busy-emp-name" style="font-weight: 700; color: var(--text-primary);">Loading...</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                  <span>Standby Employees</span>
+                  <span id="standby-emp-count" style="font-weight: 700; color: var(--success);">0</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                  <span>Task Success Rate</span>
+                  <span id="task-success-rate" style="font-weight: 700; color: var(--info);">100%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <span class="chart-card-title"><i class="fa-solid fa-hourglass-half"></i> Delivery Indices</span>
+              </div>
+              <div style="font-size: 0.8rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: flex; justify-content: space-between;">
+                  <span>Avg Completion Time</span>
+                  <span style="font-weight: 700; color: var(--text-primary);">1.2 Days</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                  <span>Overdue Tasks</span>
+                  <span id="overdue-tasks-count" style="font-weight: 700; color: var(--danger);">0</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                  <span>Efficiency Index</span>
+                  <span style="font-weight: 700; color: var(--primary);">88.4%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Analytics Charts Row 1: Performance History & Task Status Distribution -->
+          <div class="charts-grid">
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <span class="chart-card-title"><i class="fa-solid fa-chart-line"></i> Employee Performance History</span>
+              </div>
+              <div class="chart-container">
+                <canvas id="chartPerformanceOverTime"></canvas>
+                <div class="chart-empty-state" id="empty-chartPerformanceOverTime" style="display: none;">
+                  <i class="fa-solid fa-chart-line"></i>
+                  <p class="empty-title">No performance history available yet</p>
+                  <p class="empty-sub">Complete a task to start tracking employee performance.</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <span class="chart-card-title"><i class="fa-solid fa-chart-pie"></i> Task Status Distribution</span>
+              </div>
+              <div class="chart-container">
+                <canvas id="chartTaskCompletion"></canvas>
+                <div class="chart-empty-state" id="empty-chartTaskCompletion" style="display: none;">
+                  <i class="fa-solid fa-chart-pie"></i>
+                  <p class="empty-title">No task distribution data yet</p>
+                  <p class="empty-sub">Create tasks to track task status distribution.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Analytics Charts Row 2: Employee Efficiency & Workload Distribution -->
+          <div class="charts-grid">
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <span class="chart-card-title"><i class="fa-solid fa-chart-column"></i> Employee Efficiency</span>
+              </div>
+              <div class="chart-container">
+                <canvas id="chartEmployeeEfficiency"></canvas>
+                <div class="chart-empty-state" id="empty-chartEmployeeEfficiency" style="display: none;">
+                  <i class="fa-solid fa-chart-column"></i>
+                  <p class="empty-title">No employee efficiency data yet</p>
+                  <p class="empty-sub">Add employees to view efficiency ratings.</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <span class="chart-card-title"><i class="fa-solid fa-chart-bar"></i> Workload Distribution</span>
+              </div>
+              <div class="chart-container">
+                <canvas id="chartWorkloadDistribution"></canvas>
+                <div class="chart-empty-state" id="empty-chartWorkloadDistribution" style="display: none;">
+                  <i class="fa-solid fa-chart-bar"></i>
+                  <p class="empty-title">No workload distribution data yet</p>
+                  <p class="empty-sub">Assign tasks to view employee workload distribution.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Analytics Charts Row 3: Task Priority Distribution & Performance vs Experience -->
+          <div class="charts-grid">
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <span class="chart-card-title"><i class="fa-solid fa-chart-pie"></i> Task Priority Distribution</span>
+              </div>
+              <div class="chart-container">
+                <canvas id="chartTaskPriority"></canvas>
+                <div class="chart-empty-state" id="empty-chartTaskPriority" style="display: none;">
+                  <i class="fa-solid fa-chart-pie"></i>
+                  <p class="empty-title">No task priority data yet</p>
+                  <p class="empty-sub">Add tasks with priority levels to view distribution.</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <span class="chart-card-title"><i class="fa-solid fa-circle-nodes"></i> Performance vs Experience</span>
+              </div>
+              <div class="chart-container">
+                <canvas id="chartEfficiencyComparison"></canvas>
+                <div class="chart-empty-state" id="empty-chartEfficiencyComparison" style="display: none;">
+                  <i class="fa-solid fa-circle-nodes"></i>
+                  <p class="empty-title">No performance vs experience data yet</p>
+                  <p class="empty-sub">Add workforce members to compare performance against experience.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Analytics Charts Row 4: Completion Trend -->
+          <div class="charts-grid">
+            <div class="chart-card" style="grid-column: 1 / -1;">
+              <div class="chart-card-header">
+                <span class="chart-card-title"><i class="fa-solid fa-chart-line"></i> Completion Trend</span>
+              </div>
+              <div class="chart-container">
+                <canvas id="chartCompletionTrends"></canvas>
+                <div class="chart-empty-state" id="empty-chartCompletionTrends" style="display: none;">
+                  <i class="fa-solid fa-chart-line"></i>
+                  <p class="empty-title">No completion trend data available yet</p>
+                  <p class="empty-sub">Complete assigned tasks to start tracking completion trends.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 6: ACTIVITY TIMELINE -->
+        <section class="view-section" id="section-activity">
+          <div class="section-header">
+            <div class="section-title">
+              <h1>Activity Feed</h1>
+              <p>Chronological audit trail of task optimization and employee assignments</p>
+            </div>
+          </div>
+          
+          <div class="activity-feed-card">
+            <div class="activity-timeline" id="activityTimelineContainer">
+              <!-- Dynamically populated via JS -->
+            </div>
+          </div>
+        </section>
+        
+        <!-- SECTION 7: SUBMISSION PORTAL -->
+        <section class="view-section" id="section-submission">
+          <div class="section-header">
+            <div class="section-title">
+              <h1>Deliverables Portal</h1>
+              <p>Upload files to mark assigned tasks as complete and trigger review</p>
+            </div>
+          </div>
+          
+          <div class="portal-container">
+            <!-- Left Upload Card -->
+            <div class="upload-card">
+              <div class="form-group" style="width: 100%; margin-bottom: 20px;">
+                <label for="submitTaskSelect">Select Active Task to Submit</label>
+                <select id="submitTaskSelect" class="form-control" style="margin-top: 8px;">
+                  <!-- Dynamically populated -->
+                </select>
+              </div>
+              
+              <div class="dropzone-area" id="dropzone">
+                <i class="fa-solid fa-cloud-arrow-up dropzone-icon"></i>
+                <div class="dropzone-text">Drag & drop your deliverables here</div>
+                <div class="dropzone-subtext">Supports PDF, ZIP, PNG, and DOCX (Max 25MB)</div>
+                <input type="file" id="fileInput" class="file-input">
+              </div>
+              
+              <!-- Selected File Panel -->
+              <div class="selected-file-panel" id="selectedFilePanel">
+                <div class="file-details">
+                  <div class="file-name" id="selectedFileName">filename.zip</div>
+                  <div class="file-size" id="selectedFileSize">2.4 MB</div>
+                </div>
+                <button class="btn btn-secondary btn-sm" id="removeFileBtn" title="Remove File">
+                  <i class="fa-solid fa-xmark"></i> Remove
+                </button>
+              </div>
+              
+              <!-- Progress Indicator -->
+              <div class="upload-progress-container" id="uploadProgressContainer">
+                <div class="progress-bar-wrapper">
+                  <div class="progress-bar-fill" id="progressBarFill"></div>
+                </div>
+                <div class="progress-labels">
+                  <span id="progressText">Uploading...</span>
+                  <span id="progressPercent">0%</span>
+                </div>
+              </div>
+              
+              <div style="width: 100%; display: flex; justify-content: flex-end; margin-top: 24px;">
+                <button class="btn btn-primary" id="submitWorkBtn" disabled>
+                  <i class="fa-solid fa-paper-plane"></i> Submit Work
+                </button>
+              </div>
+            </div>
+            
+            <!-- Right Submission Tracker -->
+            <div class="portal-stats-card">
+              <div class="chart-card-header">
+                <span class="chart-card-title"><i class="fa-solid fa-clock-rotate-left"></i> Recent Submissions</span>
+              </div>
+              <div class="recent-submissions-list" id="recentSubmissionsList">
+                <!-- Javascript populated -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 8: SETTINGS VIEW -->
+        <section class="view-section" id="section-settings">
+          <div class="section-header">
+            <div class="section-title">
+              <h1>System Settings</h1>
+              <p>Configure dashboard preferences, manage backups, and reset mock data</p>
+            </div>
+          </div>
+
+          <div class="settings-grid">
+            <div class="settings-card">
+              <h3 style="font-size: 1rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-database" style="color: var(--primary);"></i> Database Operations
+              </h3>
+              
+              <div class="settings-option">
+                <div class="settings-option-info">
+                  <span class="settings-option-title">Export Database tables</span>
+                  <span class="settings-option-desc">Download individual tables as CSV documents for documentation.</span>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                  <button class="btn btn-secondary btn-sm" onclick="window.open('/api/export/employees')"><i class="fa-solid fa-download"></i> Employees</button>
+                  <button class="btn btn-secondary btn-sm" onclick="window.open('/api/export/tasks')"><i class="fa-solid fa-download"></i> Tasks</button>
+                </div>
+              </div>
+
+              <div class="settings-option">
+                <div class="settings-option-info">
+                  <span class="settings-option-title">Import Employees</span>
+                  <span class="settings-option-desc">Upload a CSV file containing employee metrics to append them.</span>
+                </div>
+                <div>
+                  <input type="file" id="csvFileInput" accept=".csv" style="display: none;">
+                  <button class="btn btn-secondary btn-sm" onclick="document.getElementById('csvFileInput').click()">
+                    <i class="fa-solid fa-file-import"></i> Upload CSV
+                  </button>
+                </div>
+              </div>
+
+              <div class="settings-option">
+                <div class="settings-option-info">
+                  <span class="settings-option-title">Backup Database file</span>
+                  <span class="settings-option-desc">Download a complete copy of the sqlite database file.</span>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="window.open('/api/backup_db')"><i class="fa-solid fa-circle-down"></i> Backup DB</button>
+              </div>
+            </div>
+
+            <div class="settings-card">
+              <h3 style="font-size: 1rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-gears" style="color: var(--secondary);"></i> Preferences & System
+              </h3>
+              
+              <div class="settings-option">
+                <div class="settings-option-info">
+                  <span class="settings-option-title">Appearance Theme</span>
+                  <span class="settings-option-desc">Switch between dark neutral and light theme interface.</span>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="document.getElementById('themeToggle').click()">
+                  <i class="fa-solid fa-circle-half-stroke"></i> Toggle Theme
+                </button>
+              </div>
+
+              <div class="settings-option">
+                <div class="settings-option-info">
+                  <span class="settings-option-title">System Status</span>
+                  <span class="settings-option-desc">Backend SQLite database connection status.</span>
+                </div>
+                <span class="status-badge available">Operational</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- ADD EMPLOYEE MODAL OVERLAY -->
+  <div class="modal-overlay" id="employeeModalOverlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2><i class="fa-solid fa-user-plus" style="color: var(--primary); margin-right: 8px;"></i> Add New Employee</h2>
+        <button class="close-modal-btn" id="closeEmployeeModal"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="addEmployeeForm">
+        <div class="form-group">
+          <label for="empName">Full Name</label>
+          <input type="text" id="empName" class="form-control" placeholder="e.g. Alex Mercer" required>
+        </div>
+        <div class="form-group">
+          <label for="empRole">Designated Role</label>
+          <input type="text" id="empRole" class="form-control" placeholder="e.g. Senior Backend Developer" required>
+        </div>
+        <div class="form-group">
+          <label for="empDepartment">Department</label>
+          <input type="text" id="empDepartment" class="form-control" placeholder="e.g. Backend / Engineering" value="Engineering">
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label for="empScore">Initial Performance (0.0 - 10.0)</label>
+            <input type="number" step="0.1" min="0" max="10" id="empScore" class="form-control" value="8.0" required>
+          </div>
+          <div class="form-group">
+            <label for="empExperience">Experience (Years)</label>
+            <input type="number" id="empExperience" class="form-control" value="4" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="empSkills">Skills (Comma-separated)</label>
+          <input type="text" id="empSkills" class="form-control" placeholder="Python, SQL, Django, API" required>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="cancelEmployeeBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Save Employee</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- CREATE TASK MODAL OVERLAY -->
+  <div class="modal-overlay" id="taskModalOverlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2><i class="fa-solid fa-plus" style="color: var(--primary); margin-right: 8px;"></i> Create New Task</h2>
+        <button class="close-modal-btn" id="closeTaskModal"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="addTaskForm">
+        <div class="form-group">
+          <label for="taskTitle">Task Title</label>
+          <input type="text" id="taskTitle" class="form-control" placeholder="e.g. Implement OAuth2 Endpoints" required>
+        </div>
+        <div class="form-group">
+          <label for="taskDesc">Description</label>
+          <textarea id="taskDesc" class="form-control" rows="3" placeholder="Brief explanation of work items..." required></textarea>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label for="taskPriority">Priority Level</label>
+            <select id="taskPriority" class="form-control">
+              <option value="High">High</option>
+              <option value="Medium" selected>Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="taskDeadline">Deadline Date</label>
+            <input type="date" id="taskDeadline" class="form-control" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="taskSkill">Primary Required Skill</label>
+          <input type="text" id="taskSkill" class="form-control" placeholder="e.g. Python, SQL, React, Kubernetes" required>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="cancelTaskBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Create Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- SLIDE-OUT EMPLOYEE DRAWER -->
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+  <div class="employee-drawer" id="employeeDrawer">
+    <div class="drawer-header">
+      <h3 style="font-size: 1rem;"><i class="fa-solid fa-id-card" style="color: var(--primary); margin-right: 8px;"></i> Employee Profile</h3>
+      <button class="close-modal-btn" id="closeDrawerBtn"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="drawer-body" id="drawerBody">
+      <!-- JavaScript populated -->
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATIONS CONTAINER -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Chart.js Engine -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Application Client Engine -->
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+
+</body>
+</html>
