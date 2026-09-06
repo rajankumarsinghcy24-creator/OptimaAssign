@@ -222,8 +222,11 @@ python scratch/verify_analytics_system.py
 
 ---
 
-## 👨‍💻 Authors & License
+## 👨‍💻 Author
 
-Developed as an **Enterprise Workforce Optimization Project** for internship application and GitHub portfolios.
+**Rajan Kumar Singh**
 
-Distributed under the **MIT License**.
+B.Tech Computer Science and Engineering  
+RV College of Engineering, Bengaluru
+
+GitHub: [@rajankumarsinghcy24-creator](https://github.com/rajankumarsinghcy24-creator)
